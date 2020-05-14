@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Urban Boulders in Vienna</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 80%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+    <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js"></script>
+    <script src="where.js"></script>
+
+    <script>
+        var markers = [];
+      function initMap() {
+        // Styles a map in night mode.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 48.210033, lng: 16.363449},
+          zoom: 12,
+          styles: [
+    {
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "hue": "#FFBB00"
+            },
+            {
+                "saturation": 43.400000000000006
+            },
+            {
+                "lightness": 37.599999999999994
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "stylers": [
+            {
+                "hue": "#FFC200"
+            },
+            {
+                "saturation": -61.8
+            },
+            {
+                "lightness": 45.599999999999994
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "stylers": [
+            {
+                "hue": "#FF0300"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 51.19999999999999
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "stylers": [
+            {
+                "hue": "#FF0300"
+            },
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 52
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "stylers": [
+            {
+                "hue": "#0078FF"
+            },
+            {
+                "saturation": -13.200000000000003
+            },
+            {
+                "lightness": 2.4000000000000057
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [
+            {
+                "hue": "#00FF6A"
+            },
+            {
+                "saturation": -1.0989010989011234
+            },
+            {
+                "lightness": 11.200000000000017
+            },
+            {
+                "gamma": 1
+            }
+        ]
+    }
+]
+
+        });
+
+
+
+        i = 0;
+
+        for ( pos in myData ) {
+            i = i + 1;
+            var row = myData[pos];
+
+            var npictures = row[9]
+            obrazky = ' '
+            //creating html code for inserting all pictures for the problem
+            for (j = 0; j < npictures; j++) {
+                filename = j+1
+                //text = '<p><img src="./Photos/1/1.jpg" alt="Stickman" width="24" height="39"></p>'
+                obrazky = obrazky.concat('<p><img src="./Photos/'+i+'/'+filename+'.jpg" alt="Boulder photo" max-width="400"></p>')
+            }
+
+
+            var contentString = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="firstHeading" class="firstHeading"><a href='+row[3]+' target="_blank">'+row[4]+'</a></h1>'+
+                '<div id="bodyContent">'+
+                '<h2><b>Grade: '+row[5]+'</b></h2>'+
+                '<h3><b>Type: '+row[8]+'</b></h3>'+
+                '<h2>Description:</h2>'+
+                '<p>'+row[6]+'</p>'+
+                '<h2>Rules:</h2>'+
+                '<p>'+row[7]+'</p>'+
+                '<br><p>Source: <a href='+row[3]+' target="_blank">'+row[3]+'</a></p><br>'+
+                obrazky+
+                '</div>'+
+                '</div>';
+
+
+
+
+
+            window.console && console.log(row);
+            // if ( i < 3 ) { alert(row); }
+            var newLatlng = new google.maps.LatLng(row[0], row[1]);
+            var marker = new google.maps.Marker({
+                position: newLatlng,
+                map: map,
+                title: row[2],
+                icon: './icons/mapiconnew.png',
+                info: contentString,
+                category: row[8],
+                french: row[5]
+            });
+
+            markers.push(marker);
+
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(this.info);
+            infowindow.open(map, this);
+        });
+
+
+
+
+
+        }
+      }
+
+
+
+filterMarkers = function (chosen,parameter) {
+  for (i = 0; i < markers.length; i++) {
+  marker2 = markers[i];
+
+  if (parameter == 1){
+  // If is same category or category not picked
+  if (marker2.category == chosen || chosen.length === 0 || chosen == "All") {
+      marker2.setVisible(true);
+  }
+  // Categories don't match
+  else {
+      marker2.setVisible(false);
+  }
+}
+else if (parameter == 2){
+// If is same category or category not picked
+if (marker2.french == chosen || chosen.length === 0 || chosen == "All") {
+    marker2.setVisible(true);
+}
+// Categories don't match
+else {
+    marker2.setVisible(false);
+}
+}
+}
+}
+
+
+
+
+
+    </script>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBES3teb31tfmR8ZoVMSOfkAXwdzI5Pfhw&callback=initMap"
+    async defer></script>
+
+
+
+
+
+<table>
+         <tr>
+            <th>Type</th>
+            <th>Grade</th>
+         </tr>
+         <tr>
+            <td><select id="select-boulder-type" onchange="filterMarkers(this.value, 1);">
+            <option value="All">Show all</option>
+            <option value="Buildings">Buildings</option>
+            <option value="Cracks">Cracks</option>
+            <option value="DWS">Deep water solo</option>
+            <option value="Fun Stuff">Fun Stuff</option>
+            <option value="No type">No type</option>
+            <option value="Other Stuff">Other Stuff</option>
+            <option value="Power Boulder">Power Boulder</option>
+            <option value="Pure Steel">Pure Steel</option>
+            <option value="Sculptures">Sculptures</option>
+            <option value="Stonewalls">Stonewalls</option>
+            <option value="Training">Training</option>
+            <option value="Trees">Trees</option>
+        </select></td>
+        <td><select id="select-boulder-grade" onchange="filterMarkers(this.value, 2);">
+        <option value="All">Show all</option>
+        <option value="2">2</option>
+        <option value="2+">2+</option>
+        <option value="4">4</option>
+        <option value="5A">5A</option>
+        <option value="5B">5B</option>
+        <option value="6B">6B</option>
+        <option value="6B+">6B+</option>
+        <option value="6C">6C</option>
+        <option value="6C/6C+">6C/6C+</option>
+        <option value="7B">7B</option>
+            </select>
+        </td>
+         </tr>
+
+      </table>
+      <p>This map uses all the data from urban-boulder.com</p>
+      <p>Dropdown menus don't work in combination. Map reacts only to the dropdown used last.</p>
+
+
+
+
+</html>
